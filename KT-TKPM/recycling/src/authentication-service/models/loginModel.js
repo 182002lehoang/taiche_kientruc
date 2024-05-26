@@ -8,6 +8,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
 import "../Css/login.css";
+import { signInWithEmailAndPassword, signInWithPopup,  GoogleAuthProvider } from "firebase/auth"; //FacebookAuthProvider,
+import { auth } from "../../config/firebase";
+import { doc, getFirestore, getDoc } from "firebase/firestore";
 
 import {
   Button,
@@ -19,9 +22,45 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const LoginModel = () => {
-  const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
+  // const navigate = useNavigate();
+  // const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const db = getFirestore();
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+  // Xử lý thay đổi mật khẩu
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+
+  const handleLogin = () => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then(async (userCredential) => {
+        const user = userCredential.user;
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+       
+          navigate("/home");
+       
+      })
+      .catch((error) => {
+        console.error("Error during login:", error);
+        if (error.code === "auth/user-not-found") {
+          alert("Sai email. Vui lòng kiểm tra lại.");
+        } else if (error.code === "auth/wrong-password") {
+          alert("Sai mật khẩu. Vui lòng kiểm tra lại.");
+        } else {
+          alert("Đăng nhập không thành công do sai email hoặc mật khẩu. Vui lòng thử lại.");
+        }
+      });
+  };
+
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -67,11 +106,27 @@ const LoginModel = () => {
             noValidate
             autoComplete="off"
           >
-            <TextField id="filled-basic" label="Email" variant="filled" />
+            {/* <TextField id="filled-basic" label="Email" variant="filled" /> */}
+            <input
+              placeholder="Tài khoản"
+              type="email"
+              value={email}
+              onChange={handleEmailChange}
+              className="input-dangnhap"
+            />
+
             <FormControl sx={{ m: 1, width: "300px" }} variant="filled">
-              <InputLabel htmlFor="filled-adornment-password">
+              {/* <InputLabel htmlFor="filled-adornment-password">
                 Password
-              </InputLabel>
+              </InputLabel> */}
+              <input
+              placeholder="Mật khẩu"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={handlePasswordChange}
+              className="input-dangnhap"
+            />
+
               <FilledInput
                 id="filled-adornment-password"
                 type={showPassword ? "text" : "password"}
@@ -114,10 +169,11 @@ const LoginModel = () => {
             </p>
             <Button variant="contained"
             onClick={()=>{
-              toast.success("Đăng nhập thành công")
-              setTimeout(() => {
-                navigate("/home")
-              }, 2000);
+              handleLogin()
+              // toast.success("Đăng nhập thành công")
+              // setTimeout(() => {
+              //   navigate("/home")
+              // }, 2000);
             }}
             >
               <TrendingFlatIcon fontSize="large" />
