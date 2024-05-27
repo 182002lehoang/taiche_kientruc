@@ -1,4 +1,43 @@
-.log-container-sign:hover{
-    color: #5AB2FF;
+/* loginStyles.css */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .login-content {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .login-form {
+    margin-top: 20px;
+  }
+  
+  .input-dangnhap {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  .login-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .log-container-sign {
     cursor: pointer;
-}
+    color: blue;
+  }
+  
+  .log-container-sign:hover {
+    text-decoration: underline;
+  }

@@ -24,6 +24,18 @@ function FormPhone() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (
+      formData.name.trim() === "" ||
+      formData.phone.trim() === "" ||
+      formData.productName.trim() === "" ||
+      formData.productType.trim() === "" ||
+      !formData.image || 
+      formData.address.trim() === ""
+    ) {
+      alert("Vui lòng điền đầy đủ thông tin vào các trường!");
+      return;
+    }
     if (selectedProductIndex !== null) {
       // Nếu có hàng được chọn, thì thực hiện cập nhật dữ liệu cho hàng đó
       const updatedList = [...productList];
@@ -41,6 +53,7 @@ function FormPhone() {
         address: "",
         note: "",
         status: "chờ duyệt",
+        image: null,
       });
     } else {
       // Nếu không có hàng được chọn, thì thực hiện thêm mới dữ liệu
@@ -57,6 +70,7 @@ function FormPhone() {
         address: "",
         note: "",
         status: "chờ duyệt",
+        image: null,
       });
     }
   };
@@ -65,6 +79,39 @@ function FormPhone() {
     // Xử lý sự kiện click vào hàng trong bảng
     setSelectedProductIndex(index); // Lưu index của hàng được chọn
     setFormData(productList[index]); // Đặt dữ liệu của hàng được chọn vào form data
+  };
+
+  // const handleDelete = (index) => {
+  //   const updatedList = [...productList];
+  //   updatedList.splice(index, 1); // Loại bỏ sản phẩm tại index
+  //   setProductList(updatedList);
+  //   localStorage.setItem("productList", JSON.stringify(updatedList));
+  // };
+  const handleDelete = (index) => {
+    const productToDelete = productList[index];
+    if (productToDelete.status === "Đã xét duyệt") {
+      alert("Không thể xóa sản phẩm đã xét duyệt!");
+      return; // Không thực hiện xóa nếu sản phẩm đã xét duyệt
+    }
+
+    const updatedList = [...productList];
+    updatedList.splice(index, 1); // Loại bỏ sản phẩm tại index
+    setProductList(updatedList);
+    localStorage.setItem("productList", JSON.stringify(updatedList));
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setFormData({
+          ...formData,
+          image: event.target.result, // Đây là định dạng base64 của hình ảnh
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -139,6 +186,24 @@ function FormPhone() {
         </div>
         <div style={inputRow}>
           <div style={inputContainer}>
+            <label>Hình ảnh:</label>
+            <input
+              style={inputStyle}
+              type="file"
+              onChange={handleImageUpload}
+            />
+          </div>
+          {/* Hiển thị hình ảnh dưới dạng base64 */}
+          {formData.image && (
+            <img
+              src={formData.image}
+              alt="Product"
+              style={{ maxWidth: 100, marginLeft: 20 }}
+            />
+          )}
+        </div>
+        <div style={inputRow}>
+          <div style={inputContainer}>
             <label>Địa chỉ:</label>
             <input
               style={inputStyle}
@@ -187,9 +252,12 @@ function FormPhone() {
               <th style={tableHeader}>Số điện thoại</th>
               <th style={tableHeader}>Tên sản phẩm</th>
               <th style={tableHeader}>Loại sản phẩm</th>
+              <th style={tableHeader}>Hình ảnh</th>
               <th style={tableHeader}>Địa chỉ</th>
               <th style={tableHeader}>Ghi chú</th>
+              <th style={tableHeader}>Thành tiền</th>
               <th style={tableHeader}>Xét duyệt</th>
+              <th style={tableHeader}>Xóa</th>
             </tr>
           </thead>
           <tbody>
@@ -204,9 +272,22 @@ function FormPhone() {
                 <td style={tableData}>{product.phone}</td>
                 <td style={tableData}>{product.productName}</td>
                 <td style={tableData}>{product.productType}</td>
+                <td style={tableData}>
+                  {product.image && (
+                    <img
+                      src={product.image}
+                      alt="Product"
+                      style={{ maxWidth: 100 }}
+                    />
+                  )}
+                </td>
                 <td style={tableData}>{product.address}</td>
                 <td style={tableData}>{product.note}</td>
+                <td style={tableData}>{product.price}</td>
                 <td style={tableData}>{product.status}</td>
+                <td style={tableData}>
+                  <button onClick={() => handleDelete(index)}>Xóa</button>
+                </td>
               </tr>
             ))}
           </tbody>

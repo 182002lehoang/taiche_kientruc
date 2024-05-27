@@ -24,7 +24,7 @@ function HomeModel() {
             alt="img-user"
             className="user-avatar"
           />
-          <p className="username">admin</p>
+          <p className="username">user</p>
         </div>
         <ul className="menu">
           <li
@@ -39,14 +39,14 @@ function HomeModel() {
             onClick={() => handleClickSetColor(2)}
           >
             <AutoGraphOutlinedIcon fontSize="large" />
-            <p>Sản phẩm đang chờ</p>
+            <p>Sản phẩm tái chế</p>
           </li>
           {/* <li
             className={`menu-item ${current === 3 ? "selected" : ""}`}
             onClick={() => handleClickSetColor(3)}
           >
             <RecyclingOutlinedIcon fontSize="large" />
-            <p>Sản phẩm tái chế</p>
+            <p>Thiết bị tái chế</p>
           </li> */}
           {/* <li
             className={`menu-item ${current === 4 ? "selected" : ""}`}
@@ -59,8 +59,8 @@ function HomeModel() {
       </div>
       <div className="content">
         {current === 1 && <FrameHome />}
-        {current === 2 && <AdminPage />}
-        {/* {current === 3 && <FormPhone />} */}
+        {/* {current === 2 && <AdminPage />} */}
+        {current === 2 && <FormPhone />}
         {/* {current === 4 && (
           <div>
             <h2>Phản hồi đánh giá</h2>

@@ -17,10 +17,31 @@ function AdminPage() {
     localStorage.setItem("productList", JSON.stringify(updatedList));
   };
 
+  const handleTotalChange = (index, newValue) => {
+    const updatedList = [...productList];
+    updatedList[index].total = newValue;
+    setProductList(updatedList);
+    localStorage.setItem("productList", JSON.stringify(updatedList));
+  };
+  const handlePriceChange = (index, newPrice) => {
+    const updatedList = [...productList];
+    updatedList[index].price = newPrice;
+    setProductList(updatedList);
+    localStorage.setItem("productList", JSON.stringify(updatedList));
+  };
+
   return (
-    <div style={{ padding: 20 }}>
-      <h2 style={{ textAlign: "center", marginBottom: 20 }}>Danh sách sản phẩm</h2>
-      <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #ddd" }}>
+    <div style={{ padding: 20}}>
+      <h2 style={{ textAlign: "center", marginBottom: 20 }}>
+        Danh sách sản phẩm
+      </h2>
+      <table
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          border: "1px solid #ddd",
+        }}
+      >
         <thead>
           <tr>
             <th style={tableHeader}>STT</th>
@@ -28,8 +49,10 @@ function AdminPage() {
             <th style={tableHeader}>Số điện thoại</th>
             <th style={tableHeader}>Tên sản phẩm</th>
             <th style={tableHeader}>Loại sản phẩm</th>
+            <th style={tableHeader}>Hình ảnh</th>
             <th style={tableHeader}>Địa chỉ</th>
             <th style={tableHeader}>Ghi chú</th>
+            <th style={tableHeader}>Thành tiền</th>
             <th style={tableHeader}>Xét duyệt</th>
           </tr>
         </thead>
@@ -41,8 +64,25 @@ function AdminPage() {
               <td style={tableData}>{product.phone}</td>
               <td style={tableData}>{product.productName}</td>
               <td style={tableData}>{product.productType}</td>
+              <td style={tableData}>
+                {product.image && (
+                  <img
+                    src={product.image}
+                    alt="Product"
+                    style={{ width: "50px", height: "50px" }}
+                  />
+                )}
+              </td>
+
               <td style={tableData}>{product.address}</td>
               <td style={tableData}>{product.note}</td>
+              <td style={tableData}>
+                <input
+                  type="number"
+                  value={product.price || ""}
+                  onChange={(e) => handlePriceChange(index, e.target.value)}
+                />
+              </td>
               <td style={tableData}>
                 <select
                   value={product.status}
@@ -62,16 +102,16 @@ function AdminPage() {
 }
 
 const tableData = {
-    border: "1px solid #ddd",
-    padding: "8px",
-  };
-  const tableRow = {
-    backgroundColor: "#fff",
-  };
-  const tableHeader = {
-    backgroundColor: "#f2f2f2",
-    border: "1px solid #ddd",
-    padding: "8px",
-  };  
+  border: "1px solid #ddd",
+  padding: "8px",
+};
+const tableRow = {
+  backgroundColor: "#fff",
+};
+const tableHeader = {
+  backgroundColor: "#f2f2f2",
+  border: "1px solid #ddd",
+  padding: "8px",
+};
 
 export default AdminPage;

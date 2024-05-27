@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -8,10 +7,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
 import "../Css/login.css";
-import { signInWithEmailAndPassword, signInWithPopup,  GoogleAuthProvider } from "firebase/auth"; //FacebookAuthProvider,
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../config/firebase";
 import { doc, getFirestore, getDoc } from "firebase/firestore";
-
 import {
   Button,
   FilledInput,
@@ -22,32 +20,38 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const LoginModel = () => {
-  // const navigate = useNavigate();
-  // const [showPassword, setShowPassword] = useState(false);
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
   const db = getFirestore();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };
-  // Xử lý thay đổi mật khẩu
+
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
-
 
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
         const user = userCredential.user;
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-       
-          navigate("/home");
-       
+        const userDoc = await getDoc(doc(db, "user", user.uid));
+        // navigate("/home");
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.role === "admin") {
+            navigate("/home");
+          } else if (userData.role === "user") {
+            navigate("/home1");
+          } else {
+            alert("Invalid role. Please contact support.");
+          }
+        } else {
+          alert("User document does not exist. Please contact support.");
+        }
       })
       .catch((error) => {
         console.error("Error during login:", error);
@@ -61,43 +65,21 @@ const LoginModel = () => {
       });
   };
 
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        maxHeight: "100%",
-      }}
-    >
-      <ToastContainer/>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-around",
-          width: "100%",
-          maxWidth: "100%",
-        }}
-      >
+    <div className="login-container">
+      <ToastContainer />
+      <div className="login-content">
         <div>
-          <h1>Hello,</h1>
-          <h1>Welcome to Recycling</h1>
+          <h1>Đăng nhập</h1>
+          
         </div>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+        <div className="login-form">
           <Box
             component="form"
             sx={{
@@ -106,7 +88,6 @@ const LoginModel = () => {
             noValidate
             autoComplete="off"
           >
-            {/* <TextField id="filled-basic" label="Email" variant="filled" /> */}
             <input
               placeholder="Tài khoản"
               type="email"
@@ -114,19 +95,14 @@ const LoginModel = () => {
               onChange={handleEmailChange}
               className="input-dangnhap"
             />
-
             <FormControl sx={{ m: 1, width: "300px" }} variant="filled">
-              {/* <InputLabel htmlFor="filled-adornment-password">
-                Password
-              </InputLabel> */}
               <input
-              placeholder="Mật khẩu"
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={handlePasswordChange}
-              className="input-dangnhap"
-            />
-
+                placeholder="Mật khẩu"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={handlePasswordChange}
+                className="input-dangnhap"
+              />
               <FilledInput
                 id="filled-adornment-password"
                 type={showPassword ? "text" : "password"}
@@ -145,36 +121,16 @@ const LoginModel = () => {
               />
             </FormControl>
           </Box>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-around",
-              marginLeft: "50%",
-              marginTop: "20%",
-            }}
-          >
+          <div className="login-actions">
             <p
-              style={{
-                fontSize: "16px",
-              }}
               className="log-container-sign"
-              onClick={
-                ()=>{
-                  navigate("/sign-up")
-                }
-              }
+              onClick={() => navigate("/sign-up")}
             >
               Đăng ký tài khoản
             </p>
-            <Button variant="contained"
-            onClick={()=>{
-              handleLogin()
-              // toast.success("Đăng nhập thành công")
-              // setTimeout(() => {
-              //   navigate("/home")
-              // }, 2000);
-            }}
+            <Button
+              variant="contained"
+              onClick={handleLogin}
             >
               <TrendingFlatIcon fontSize="large" />
             </Button>

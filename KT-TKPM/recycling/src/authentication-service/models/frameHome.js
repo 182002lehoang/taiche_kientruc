@@ -1,65 +1,40 @@
-import React from "react";
-import ChartService from "../services/chartService";
-import apple from "../../IMG/apple-logo.png";
-import laptop from "../../IMG/laptop.png";
-import android from "../../IMG/technology.png";
-import "../Css/fram.css"
+import React, { useState, useEffect } from 'react';
+import '../Css/fram.css';
+import penel1 from '../../IMG/panel1.png';
+import penel2 from '../../IMG/panel2.png';
+import penel3 from '../../IMG/panele.png';
 
 function FrameHome() {
-  return (
-    <div>
-      <h1 style={{ marginLeft: "100px" }}>Sản phẩm</h1>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-around",
-          height: "40vh",
-          maxHeight: "100%",
-          maxWidth: "100%",
-        }}
-      >
-        <div>
-          <img
-            src={android}
-            style={{
-              height: "80px",
-              width: "80px",
-            }}
-            alt="android"
-          />
-          <p>325</p>
-          <p>Androids</p>
-        </div>
-        <div>
-          <img
-            src={laptop}
-            style={{
-              height: "80px",
-              width: "80px",
-            }}
-            alt="Laptops"
-          />
-           <p>325</p>
-          <p>Androids</p>
-        </div>
+  const [currentImage, setCurrentImage] = useState(1); 
 
-        <div>
-          <img
-            src={apple}
-            style={{
-              height: "80px",
-              width: "80px",
-            }}
-            alt="Apples"
-          />
-           <p>325</p>
-          <p>Androids</p>
-        </div>
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage(prevImage => (prevImage === 3 ? 1 : prevImage + 1)); 
+    }, 3000); 
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="home-page">
+      <header>
+        <h1>Nhận thức về tái chế thiết bị điện tử</h1>
+        <p>Giải pháp bảo vệ môi trường</p>
+      </header>
+
+      <div className="image-container">
+        {currentImage === 1 && <img src={penel1} style={{width:400,height:400}}  />}
+        {currentImage === 2 && <img src={penel2}style={{width:400,height:400}}  />}
+        {currentImage === 3 && <img src={penel3} style={{width:400,height:400}}  />}
       </div>
 
-      <ChartService />
+      <footer>
+        <p>Thông tin liên hệ:</p>
+        <ul>
+          <li>Email: admin@gmail.com</li>
+          <li>Số điện thoại: 0123 456 789</li>
+        </ul>
+      </footer>
     </div>
   );
 }
